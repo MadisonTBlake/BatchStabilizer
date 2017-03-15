@@ -1,0 +1,5 @@
+VirtualDub.Open("m:/GOPR0291.MP4",0,0);
+VirtualDub.subset.Clear();
+VirtualDub.subset.AddRange(0,1);
+VirtualDub.video.SetRange();
+VirtualDub.RunNullVideoPass();
