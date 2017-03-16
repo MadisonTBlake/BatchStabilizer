@@ -11,7 +11,11 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Batch Stabalizer</string>
+  </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>../icon.ico</normaloff>../icon.ico</iconset>
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QVBoxLayout" name="verticalLayout">
