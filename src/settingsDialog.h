@@ -32,6 +32,14 @@ public slots:
 
 private:
 
+    //!
+    //! \brief Function that scans directory and looks for any incomplete tasks artifacts,
+    //! Then deletes the files.
+    //!
+    //! Do not call this function while a task is ongoing.
+    //!
+    void CleanIncomplete(const QString &path);
+
     void StartNextTasks();
 
     void CheckForValidVDubPath();
@@ -50,8 +58,6 @@ private slots:
 
     void on_btn_BrowseScanDir_clicked();
 
-    void on_btn_BrowseOutputDir_clicked();
-
     void on_btn_StartStop_clicked();
 
 private:
@@ -59,8 +65,6 @@ private:
     void VDubDirProvided(const QString &dir);
 
     void SourceDirProvied(const QString &dir);
-
-    void OutputDirProvided(const QString &dir);
 
 private:
     Ui::SettingsDialog *ui;

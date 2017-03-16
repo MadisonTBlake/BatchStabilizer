@@ -25,7 +25,6 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
 
     VDubDirProvided("M:\\VirutalDub");
     SourceDirProvied("M:\\Videos\\Test");
-    OutputDirProvided("M:\\Videos\\Test");
 }
 
 
@@ -50,7 +49,7 @@ void SettingsDialog::PerformScan(const QString &path)
 
         if(filename.endsWith("_stabalized.avi")) {
             if(files.contains(it.fileInfo().completeBaseName() + ".mp4") == false) {
-                if(m_ActiveTasks.ShouldIgnore(it.fileInfo().absoluteFilePath()) == false)
+                if(m_ActiveTasks.ShouldIgnore(it.fileInfo().absoluteFilePath()) == false && m_QueuedTasks.ShouldIgnore(it.fileInfo().absoluteFilePath()) == false)
                 {
                     auto newTasks = std::make_shared<MPEGConversion>(ui->le_VDub->text(), it.fileInfo().absoluteFilePath());
                     this->m_QueuedTasks.Append(newTasks);
@@ -63,7 +62,7 @@ void SettingsDialog::PerformScan(const QString &path)
         else if(filename.endsWith(".log")) {
             if(files.contains(it.fileInfo().completeBaseName() + "_stabalized.avi") == false) {
 
-                if(m_ActiveTasks.ShouldIgnore(it.fileInfo().absoluteFilePath()) == false)
+                if(m_ActiveTasks.ShouldIgnore(it.fileInfo().absoluteFilePath()) == false && m_QueuedTasks.ShouldIgnore(it.fileInfo().absoluteFilePath()) == false)
                 {
                     QString videoFile = it.fileInfo().absoluteDir().absolutePath() + QDir::separator() + it.fileInfo().completeBaseName();
                     if(QFile::exists(videoFile + ".mp4")) {
@@ -99,7 +98,72 @@ void SettingsDialog::PerformScan(const QString &path)
 }
 
 
+//!
+//! \brief Function that scans directory and looks for any incomplete tasks artifacts,
+//! Then deletes the files.
+//!
+//! Do not call this function while a task is ongoing.
+//!
+void SettingsDialog::CleanIncomplete(const QString &path)
+{
+    QStringList files = QDir(path).entryList(QDir::NoDotAndDotDot | QDir::Files);
 
+    while(true) {
+        bool getThrough = true;
+        foreach (QString file, files) {
+
+            //If final stabalized file exists and so does the output from pass two
+            //Then the final conversion wasn't complete
+            //Remove final from directory and take out both files of files-to-consider
+            if(file.contains("_stabalized.mp4")) {
+                QString previousFile = file;
+                previousFile.replace("_stabalized.mp4", "_stabalized.avi");
+                if(files.contains(previousFile)) {
+                    QFile::remove(path + QDir::separator() + file);
+                    files.removeOne(previousFile);
+                    files.removeOne(file);
+                    getThrough = false;
+                    break;
+                }
+            }
+
+            //if ._stabalized.avi exists, check if final stabalized has been made.
+            //If it doesn't exists then the pass2 tasks wasn't completed
+            //Remove _stabalized.avi from directory to re-do pass 2.
+            //Take file out of list of files-to-consider
+            if(file.contains("_stabalized.avi")) {
+                QString nextFile = file;
+                nextFile.replace("_stabalized.avi", "._stabalized.mp4");
+                if(files.contains(nextFile) == false) {
+                    QFile::remove(path + QDir::separator() + file);
+                    files.removeOne(file);
+                    getThrough = false;
+                    break;
+                }
+            }
+
+            //if .log exists, check if a stabalized has been made
+            //If it doesn't exists then the .log process wasn't completed
+            //Remove log from directory to re-do pass 1.
+            //Take log file out of list of files-to-consider
+            if(file.contains(".log")) {
+                QString nextFile = file;
+                nextFile.replace(".log", "_stabalized.avi");
+                if(files.contains(nextFile) == false) {
+                    QFile::remove(path + QDir::separator() + file);
+                    files.removeOne(file);
+                    getThrough = false;
+                    break;
+                }
+            }
+        }
+
+        if(getThrough == true) {
+            break;
+        }
+    }
+
+}
 
 
 void SettingsDialog::StartNextTasks()
@@ -137,13 +201,11 @@ void SettingsDialog::CheckForValidVDubPath()
 void SettingsDialog::CheckForMonitoring() {
 
     QString sourceDirStr = ui->le_ScanDir->text();
-    QString destDirStr = ui->le_OutputDir->text();
 
-    if(sourceDirStr != "" && destDirStr != "") {
+    if(sourceDirStr != "") {
         QDir sourceDir(ui->le_ScanDir->text());
-        QDir destDir(ui->le_OutputDir->text());
 
-        if(sourceDir.exists() && destDir.exists() && m_CurrentlyMonitoring == false && m_ValidVDubDir == true) {
+        if(sourceDir.exists() && m_CurrentlyMonitoring == false && m_ValidVDubDir == true) {
             m_CurrentlyMonitoring = true;
             ui->btn_StartStop->setEnabled(true);
             StartMonitoring();
@@ -157,6 +219,7 @@ void SettingsDialog::CheckForMonitoring() {
 void SettingsDialog::StartMonitoring()
 {
     connect(watcher, SIGNAL(directoryChanged(QString)), this, SLOT(PerformScan(QString)));
+    CleanIncomplete(ui->le_ScanDir->text());
     PerformScan(ui->le_ScanDir->text());
 }
 
@@ -235,20 +298,6 @@ void SettingsDialog::on_btn_BrowseScanDir_clicked()
     }
 }
 
-void SettingsDialog::on_btn_BrowseOutputDir_clicked()
-{
-    QString dir = QFileDialog::getExistingDirectory(this, tr("Open Directory"),
-                                                    "/home",
-                                                    QFileDialog::DontResolveSymlinks);
-
-    if(dir == "") {
-        return;
-    }
-    else {
-        OutputDirProvided(dir);
-    }
-}
-
 void SettingsDialog::VDubDirProvided(const QString &dir)
 {
     ui->le_VDub->setText(dir);
@@ -259,13 +308,6 @@ void SettingsDialog::SourceDirProvied(const QString &dir)
 {
     ui->le_ScanDir->setText(dir);
     watcher->addPath(dir);
-    CheckForMonitoring();
-}
-
-
-void SettingsDialog::OutputDirProvided(const QString &dir)
-{
-    ui->le_OutputDir->setText(dir);
     CheckForMonitoring();
 }
 

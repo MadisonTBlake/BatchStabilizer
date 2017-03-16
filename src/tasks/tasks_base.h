@@ -5,6 +5,7 @@
 
 #include <QObject>
 #include <QProcess>
+#include <QFile>
 
 class TasksBase : public QObject
 {
@@ -28,6 +29,14 @@ public:
         m_Proc(NULL)
     {
 
+    }
+
+    void CreateOutputFile() {
+        //create the output file
+        QString outFile = this->Output();
+        QFile file(this->Output());
+        file.open(QIODevice::WriteOnly);
+        file.close();
     }
 
     void Abort() {
