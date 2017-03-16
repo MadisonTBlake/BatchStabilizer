@@ -5,6 +5,7 @@
 #include <QDir>
 #include <QDirIterator>
 #include <QFileDialog>
+#include <QMenu>
 
 #include "tasks/deshaker_pass1.h"
 #include "tasks/deshaker_pass2.h"
@@ -17,14 +18,43 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
     m_CurrentlyMonitoring(false),
     m_StoppedViaButton(false)
 {
+    this->setWindowFlags(Qt::Tool);
+
     ui->setupUi(this);
 
     watcher = new QFileSystemWatcher(this);
 
     m_DeshakerConfiguration.WriteScripts();
 
+    minimizeAction = new QAction(tr("Mi&nimize"), this);
+    connect(minimizeAction, &QAction::triggered, this, &SettingsDialog::SendToSystemTray);
+
+    restoreAction = new QAction(tr("&Restore"), this);
+    connect(restoreAction, &QAction::triggered, this, &SettingsDialog::MakeVisible);
+
+    quitAction = new QAction(tr("&Quit"), this);
+    connect(quitAction, &QAction::triggered, qApp, &QCoreApplication::quit);
+
+    trayIconMenu = new QMenu(this);
+    trayIconMenu->addAction(minimizeAction);
+    trayIconMenu->addAction(restoreAction);
+    trayIconMenu->addSeparator();
+    trayIconMenu->addAction(quitAction);
+
+    trayIcon = new QSystemTrayIcon(this);
+    trayIcon->setContextMenu(trayIconMenu);
+    trayIcon->setIcon(QIcon("../icon.ico"));
+    trayIcon->setVisible(true);
+
+
+
+
     VDubDirProvided("M:\\VirutalDub");
     SourceDirProvied("M:\\Videos\\Test");
+
+    SendToSystemTray();
+
+    this->setWindowState(Qt::WindowMinimized);
 }
 
 
@@ -33,6 +63,24 @@ SettingsDialog::~SettingsDialog()
     delete ui;
 }
 
+
+void SettingsDialog::MakeVisible() {
+    this->setWindowFlags(Qt::Widget | Qt::WindowMinimizeButtonHint | Qt::WindowCloseButtonHint);
+    this->showNormal();
+}
+
+void SettingsDialog::SendToSystemTray() {
+    this->setWindowFlags(Qt::Tool);
+}
+
+void SettingsDialog::closeEvent(QCloseEvent *event) {
+    QCoreApplication::quit();
+}
+
+void SettingsDialog::hideEvent(QHideEvent *event)
+{
+    SendToSystemTray();
+}
 
 void SettingsDialog::PerformScan(const QString &path)
 {

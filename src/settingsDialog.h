@@ -26,9 +26,19 @@ public:
     explicit SettingsDialog(QWidget *parent = 0);
     ~SettingsDialog();
 
+
+
 public slots:
 
+    void MakeVisible();
+
+    void SendToSystemTray();
+
     void PerformScan(const QString &path);
+
+    virtual void closeEvent(QCloseEvent *event);
+
+    virtual void hideEvent(QHideEvent *event);
 
 private:
 
@@ -79,6 +89,13 @@ private:
     TasksList m_ActiveTasks;
 
     DeshakerConfiguration m_DeshakerConfiguration;
+
+    QAction *minimizeAction;
+    QAction *restoreAction;
+    QAction *quitAction;
+
+    QSystemTrayIcon *trayIcon;
+    QMenu *trayIconMenu;
 };
 
 #endif // MAINWINDOW_H
