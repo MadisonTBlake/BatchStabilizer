@@ -42,8 +42,8 @@ public:
     void Abort() {
         if(m_Proc != NULL) {
             m_Proc->terminate();
-            CleanAfterAbort();
         }
+        CleanAfterAbort();
     }
 
     virtual TasksTypes Type() const = 0;

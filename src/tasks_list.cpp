@@ -5,6 +5,14 @@ TasksList::TasksList()
 
 }
 
+std::shared_ptr<TasksBase> TasksList::getSharedPtr(const TasksBase* ptr) const
+{
+    for(auto it = this->cbegin() ; it != this->cend() ; ++it) {
+        if((*it).get() == ptr) {
+            return (*it);
+        }
+    }
+}
 
 //!
 //! \brief Append tasks to List

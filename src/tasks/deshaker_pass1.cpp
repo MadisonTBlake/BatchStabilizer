@@ -11,6 +11,7 @@ DeshakerPass1::DeshakerPass1(const QString &VDubPath, const QString &filename) :
 
 DeshakerPass1::~DeshakerPass1()
 {
+    QProcess::execute("taskkill /im VirtualDub.exe /f");
     Abort();
 }
 

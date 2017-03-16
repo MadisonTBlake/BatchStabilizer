@@ -10,6 +10,8 @@ class TasksList : private QList<std::shared_ptr<TasksBase>>
 public:
     TasksList();
 
+    std::shared_ptr<TasksBase> getSharedPtr(const TasksBase *ptr) const;
+
     //!
     //! \brief Append tasks to List
     //! \param newTask

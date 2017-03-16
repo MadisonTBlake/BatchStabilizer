@@ -2,6 +2,7 @@
 
 #include <QFileInfo>
 #include <QDir>
+#include <QThread>
 
 DeshakerPass2::DeshakerPass2(const QString &VDubPath, const QString &filename) :
     DeshakerGeneric(VDubPath, filename)
@@ -11,6 +12,10 @@ DeshakerPass2::DeshakerPass2(const QString &VDubPath, const QString &filename) :
 
 DeshakerPass2::~DeshakerPass2()
 {
+    QProcess killProc;
+    killProc.start("taskkill /im VirtualDub.exe /f");
+    killProc.waitForFinished();
+    QThread::msleep(500);
     Abort();
 }
 

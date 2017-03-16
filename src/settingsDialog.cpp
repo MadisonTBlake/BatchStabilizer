@@ -108,9 +108,12 @@ void SettingsDialog::CleanIncomplete(const QString &path)
 {
     QStringList files = QDir(path).entryList(QDir::NoDotAndDotDot | QDir::Files);
 
-    while(true) {
-        bool getThrough = true;
+
         foreach (QString file, files) {
+
+            if(file.at(0) == ".") {
+                continue;
+            }
 
             //If final stabalized file exists and so does the output from pass two
             //Then the final conversion wasn't complete
@@ -120,48 +123,31 @@ void SettingsDialog::CleanIncomplete(const QString &path)
                 previousFile.replace("_stabalized.mp4", "_stabalized.avi");
                 if(files.contains(previousFile)) {
                     QFile::remove(path + QDir::separator() + file);
-                    files.removeOne(previousFile);
-                    files.removeOne(file);
-                    getThrough = false;
-                    break;
                 }
             }
 
-            //if ._stabalized.avi exists, check if final stabalized has been made.
-            //If it doesn't exists then the pass2 tasks wasn't completed
-            //Remove _stabalized.avi from directory to re-do pass 2.
-            //Take file out of list of files-to-consider
             if(file.contains("_stabalized.avi")) {
-                QString nextFile = file;
-                nextFile.replace("_stabalized.avi", "._stabalized.mp4");
-                if(files.contains(nextFile) == false) {
+                QString base = file;
+                base.replace("_stabalized.avi", "");
+
+                QString P2CompleteFile = "." + base + "_p2";
+
+                if(files.contains(P2CompleteFile) == false) {
                     QFile::remove(path + QDir::separator() + file);
-                    files.removeOne(file);
-                    getThrough = false;
-                    break;
                 }
             }
 
-            //if .log exists, check if a stabalized has been made
-            //If it doesn't exists then the .log process wasn't completed
-            //Remove log from directory to re-do pass 1.
-            //Take log file out of list of files-to-consider
             if(file.contains(".log")) {
-                QString nextFile = file;
-                nextFile.replace(".log", "_stabalized.avi");
-                if(files.contains(nextFile) == false) {
+                QString base = file;
+                base.replace(".log", "");
+
+                QString P1CompleteFile = "." + base + "_p1";
+
+                if(files.contains(P1CompleteFile) == false) {
                     QFile::remove(path + QDir::separator() + file);
-                    files.removeOne(file);
-                    getThrough = false;
-                    break;
                 }
             }
         }
-
-        if(getThrough == true) {
-            break;
-        }
-    }
 
 }
 
@@ -233,27 +219,52 @@ void SettingsDialog::StopMonitoring()
 
 void SettingsDialog::TasksFinished(TasksBase* task, ActionResult result)
 {
-    if(task->Type() == TasksBase::DESHAKER_PASS1) {
+    //if task failed, retry. Otherwise advance to next task.
+    if(result.IsSuccess() == false) {
+        auto tasksToRedo = this->m_ActiveTasks.getSharedPtr(task);
+        this->m_QueuedTasks.Append(tasksToRedo);
+    }
+    else {
+        if(task->Type() == TasksBase::DESHAKER_PASS1) {
 
-        auto newTasks = std::make_shared<DeshakerPass2>(ui->le_VDub->text(), ((DeshakerPass1*)task)->Filename());
-        this->m_QueuedTasks.Append(newTasks);
-    }
-    if(task->Type() == TasksBase::DESHAKER_PASS2) {
-        auto newTasks = std::make_shared<MPEGConversion>(ui->le_VDub->text(), task->Output());
-        this->m_QueuedTasks.Append(newTasks);
-    }
-    if(task->Type() == TasksBase::MPEG_CONVERSION) {
-        QString aviStabalized = ((MPEGConversion*)task)->Filename();
-        QString logFile = aviStabalized;
-        logFile.replace("_stabalized.avi", ".log");
-        QString original1 = aviStabalized;
-        original1.replace("_stabalized.avi", ".mp4");
-        QString original2 = aviStabalized;
-        original2.replace("_stabalized.avi", ".MP4");
-        QFile::remove(aviStabalized);
-        QFile::remove(logFile);
-        //QFile.remove(original1);
-        //QFile.remove(original2);
+            //make file to mark completion
+            QString file(((DeshakerPass1*)task)->Filename());
+            QFileInfo info(file);
+            QFile completionIndicator(info.absoluteDir().absolutePath() + QDir::separator() + "."+ info.completeBaseName() + "_p1");
+            completionIndicator.open(QIODevice::WriteOnly);
+
+            auto newTasks = std::make_shared<DeshakerPass2>(ui->le_VDub->text(), ((DeshakerPass1*)task)->Filename());
+            this->m_QueuedTasks.Append(newTasks);
+        }
+        if(task->Type() == TasksBase::DESHAKER_PASS2) {
+            //make file to mark completion
+            QString file(((DeshakerPass1*)task)->Filename());
+            QFileInfo info(file);
+            QFile completionIndicator(info.absoluteDir().absolutePath() + QDir::separator() + "."+ info.completeBaseName().remove("_stabalized") + "_p2");
+            completionIndicator.open(QIODevice::WriteOnly);
+
+            auto newTasks = std::make_shared<MPEGConversion>(ui->le_VDub->text(), task->Output());
+            this->m_QueuedTasks.Append(newTasks);
+        }
+        if(task->Type() == TasksBase::MPEG_CONVERSION) {
+            QString aviStabalized = ((MPEGConversion*)task)->Filename();
+            QFileInfo info(aviStabalized);
+            QString path = info.absoluteDir().absolutePath();
+            QString baseName = info.completeBaseName();
+            baseName.replace("_stabalized", "");
+
+            QString P1Complete = path + QDir::separator() + "." + baseName + "_p1";
+            QString P2Complete = path + QDir::separator() + "." + baseName + "_p2";
+            QString logFile = path + QDir::separator() + baseName + ".log";
+            QString original1 = path + QDir::separator() + baseName + ".mp4";
+            QString original2 = path + QDir::separator() + baseName +  ".MP4";
+            QFile::remove(P1Complete);
+            QFile::remove(P2Complete);
+            QFile::remove(aviStabalized);
+            QFile::remove(logFile);
+            //QFile.remove(original1);
+            //QFile.remove(original2);
+        }
     }
 
     m_ActiveTasks.Remove(task);

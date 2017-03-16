@@ -59,7 +59,7 @@ bool MPEGConversion::Equal(const TasksBase &that)
 void MPEGConversion::CleanAfterAbort()
 {
     QFileInfo info(this->m_Filename);
-    QFile::remove(info.absoluteDir().absolutePath() + QDir::separator() + info.completeBaseName() + "_stablized.mp4");
+    QFile::remove(info.absoluteDir().absolutePath() + QDir::separator() + info.completeBaseName() + ".mp4");
 }
 
 bool MPEGConversion::ShouldIgnoreFile(const QString &filename)
@@ -67,7 +67,7 @@ bool MPEGConversion::ShouldIgnoreFile(const QString &filename)
     QFileInfo f1(filename);
 
     QFileInfo info(this->m_Filename);
-    QFileInfo f2(info.absoluteDir().absolutePath() + QDir::separator() + info.completeBaseName() + "_stablized.mp4");
+    QFileInfo f2(info.absoluteDir().absolutePath() + QDir::separator() + info.completeBaseName() + ".mp4");
 
     if(f1 == f2) {
         return true;
@@ -78,5 +78,5 @@ bool MPEGConversion::ShouldIgnoreFile(const QString &filename)
 QString MPEGConversion::Output() const
 {
     QFileInfo info(this->m_Filename);
-    return info.absoluteDir().absolutePath() + QDir::separator() + info.completeBaseName() + "_stablized.mp4";
+    return info.absoluteDir().absolutePath() + QDir::separator() + info.completeBaseName() + ".mp4";
 }
