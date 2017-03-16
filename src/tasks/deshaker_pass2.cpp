@@ -12,10 +12,6 @@ DeshakerPass2::DeshakerPass2(const QString &VDubPath, const QString &filename) :
 
 DeshakerPass2::~DeshakerPass2()
 {
-    QProcess killProc;
-    killProc.start("taskkill /im VirtualDub.exe /f");
-    killProc.waitForFinished();
-    QThread::msleep(500);
     Abort();
 }
 
@@ -51,6 +47,11 @@ bool DeshakerPass2::Equal(const TasksBase &that)
 
 void DeshakerPass2::CleanAfterAbort()
 {
+    QProcess killProc;
+    killProc.start("taskkill /im VirtualDub.exe /f");
+    killProc.waitForFinished();
+    QThread::msleep(500);
+
     QFileInfo info(this->m_Filename);
     QFile::remove(info.absoluteDir().absolutePath() + QDir::separator() + info.completeBaseName() + "_stabalized.avi");
 }

@@ -2,6 +2,7 @@
 
 #include <QFileInfo>
 #include <QDir>
+#include <QThread>
 
 DeshakerPass1::DeshakerPass1(const QString &VDubPath, const QString &filename) :
     DeshakerGeneric(VDubPath, filename)
@@ -11,7 +12,6 @@ DeshakerPass1::DeshakerPass1(const QString &VDubPath, const QString &filename) :
 
 DeshakerPass1::~DeshakerPass1()
 {
-    QProcess::execute("taskkill /im VirtualDub.exe /f");
     Abort();
 }
 
@@ -47,6 +47,11 @@ bool DeshakerPass1::Equal(const TasksBase &that)
 
 void DeshakerPass1::CleanAfterAbort()
 {
+    QProcess killProc;
+    killProc.start("taskkill /im VirtualDub.exe /f");
+    killProc.waitForFinished();
+    QThread::msleep(500);
+
     QFileInfo info(this->m_Filename);
     QFile::remove(info.absoluteDir().absolutePath() + QDir::separator() + info.completeBaseName() + ".log");
 }

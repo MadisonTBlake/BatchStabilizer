@@ -31,19 +31,12 @@ public:
 
     }
 
-    void CreateOutputFile() {
-        //create the output file
-        QString outFile = this->Output();
-        QFile file(this->Output());
-        file.open(QIODevice::WriteOnly);
-        file.close();
-    }
 
     void Abort() {
         if(m_Proc != NULL) {
             m_Proc->terminate();
+            CleanAfterAbort();
         }
-        CleanAfterAbort();
     }
 
     virtual TasksTypes Type() const = 0;

@@ -31,7 +31,6 @@ bool TasksList::Append(std::shared_ptr<TasksBase> newTask)
 
     if(copy == false) {
         this->push_back(newTask);
-        newTask->CreateOutputFile();
         return true;
     }
     return false;
