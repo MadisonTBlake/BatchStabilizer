@@ -2,8 +2,8 @@
 
 For this tool to work, a set of tool chains based around VirtualDub are required to be installed prior.
 Two ways to install these tools: 
-- Use archive in this repo
-- Download/install individually
+- [Use archive in this repo](https://github.com/MadisonTBlake/BatchStabalizer#option-1---unpack-from-archive)
+- [Download/install individually](https://github.com/MadisonTBlake/BatchStabalizer#option-2---individually-download)
 
 ## Option 1 - Unpack from archive
 
@@ -43,5 +43,7 @@ Finally we need a tool to export the .avi that VirtualDub creates into a .mp4.
 Download FFmpeg for windows from https://ffmpeg.org/download.html.
 
 In the `bin`folder of the downloaded archive, extract `ffmpeg.exe` into your VirtualDub folder.
+
+# Using Batch Stabalizer
 
 # Compile From Source
