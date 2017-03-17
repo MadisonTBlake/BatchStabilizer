@@ -6,6 +6,7 @@
 #include <QDirIterator>
 #include <QFileDialog>
 #include <QMenu>
+#include <QSettings>
 
 #include "tasks/deshaker_pass1.h"
 #include "tasks/deshaker_pass2.h"
@@ -36,8 +37,8 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
     connect(quitAction, &QAction::triggered, qApp, &QCoreApplication::quit);
 
     trayIconMenu = new QMenu(this);
-    trayIconMenu->addAction(minimizeAction);
     trayIconMenu->addAction(restoreAction);
+    trayIconMenu->addAction(minimizeAction);
     trayIconMenu->addSeparator();
     trayIconMenu->addAction(quitAction);
 
@@ -47,14 +48,22 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
     trayIcon->setVisible(true);
 
 
-
-
-    VDubDirProvided("M:\\VirutalDub");
-    SourceDirProvied("M:\\Videos\\Test");
-
     SendToSystemTray();
 
     this->setWindowState(Qt::WindowMinimized);
+
+    //load from preferecnes
+    m_Settings = new QSettings("BatchStabalizer", "BatchStabalizer");
+
+    if(m_Settings->contains("VDUB_PATH") == true) {
+        QString VDubPath = m_Settings->value("VDUB_PATH").toString();
+        VDubDirProvided(VDubPath);
+    }
+    if(m_Settings->contains("SCAN_DIR") == true) {
+        QString ScanDir = m_Settings->value("SCAN_DIR").toString();
+        SourceDirProvied(ScanDir);
+    }
+
 }
 
 
@@ -214,6 +223,22 @@ void SettingsDialog::StartNextTasks()
     this->m_ActiveTasks.Append(task);
     connect(task.get(), SIGNAL(Done(TasksBase *, ActionResult)), this, SLOT(TasksFinished(TasksBase *, ActionResult)));
     task->Execute();
+
+    QString str;
+
+    switch(task->Type()) {
+    case TasksBase::DESHAKER_PASS1:
+        str = "Active Task: Deshaker Pass One - " + ((DeshakerPass1*)task.get())->Filename();
+        break;
+    case TasksBase::DESHAKER_PASS2:
+        str = "Active Task: Deshaker Pass Two - " + ((DeshakerPass2*)task.get())->Filename();
+        break;
+    case TasksBase::MPEG_CONVERSION:
+        str = "Active Task: MPEG Conversion - " + ((MPEGConversion*)task.get())->Filename();
+        break;
+    }
+
+    ui->lbl_status->setText(str);
 }
 
 void SettingsDialog::CheckForValidVDubPath()
@@ -224,27 +249,41 @@ void SettingsDialog::CheckForValidVDubPath()
     if(check_file.exists() && check_file.isFile()) {
         m_ValidVDubDir = true;
         ui->le_VDub->setStyleSheet("background:#ffffff;");
+        ui->lbl_status->setText("");
         CheckForMonitoring();
     }
     else {
         m_ValidVDubDir = false;
         ui->le_VDub->setStyleSheet("background:#ff0000;");
+
+        ui->lbl_status->setText("ERROR : VirtualDub not found in given directory");
     }
 }
 
 void SettingsDialog::CheckForMonitoring() {
 
+    if(m_ValidVDubDir == false) {
+        return;
+    }
+
     QString sourceDirStr = ui->le_ScanDir->text();
 
     if(sourceDirStr != "") {
+        ui->lbl_status->setText("");
         QDir sourceDir(ui->le_ScanDir->text());
 
-        if(sourceDir.exists() && m_CurrentlyMonitoring == false && m_ValidVDubDir == true) {
+        if(sourceDir.exists() && m_CurrentlyMonitoring == false) {
             m_CurrentlyMonitoring = true;
             ui->btn_StartStop->setEnabled(true);
             StartMonitoring();
             return;
         }
+        else {
+            ui->lbl_status->setText("ERROR : Given directory does not exists");
+        }
+    }
+    else {
+        ui->lbl_status->setText("ERROR : No Monitor directory given");
     }
 
     ui->btn_StartStop->setEnabled(false);
@@ -338,6 +377,8 @@ void SettingsDialog::on_btn_Browse_VDub_clicked()
         return;
     }
     else {
+        m_Settings->setValue("VDUB_PATH", dir);
+        m_Settings->sync();
         VDubDirProvided(dir);
     }
 }
@@ -352,6 +393,8 @@ void SettingsDialog::on_btn_BrowseScanDir_clicked()
         return;
     }
     else {
+        m_Settings->setValue("SCAN_DIR", dir);
+        m_Settings->sync();
         SourceDirProvied(dir);
 
     }

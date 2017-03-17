@@ -6,6 +6,7 @@
 #include <QSystemTrayIcon>
 #include <QFileSystemWatcher>
 #include <QList>
+#include <QSettings>
 
 #include <memory>
 
@@ -96,6 +97,8 @@ private:
 
     QSystemTrayIcon *trayIcon;
     QMenu *trayIconMenu;
+
+    QSettings * m_Settings;
 };
 
 #endif // MAINWINDOW_H
