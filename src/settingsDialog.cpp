@@ -49,7 +49,7 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
 
     trayIcon = new QSystemTrayIcon(this);
     trayIcon->setContextMenu(trayIconMenu);
-    trayIcon->setIcon(QIcon("../icon.ico"));
+    trayIcon->setIcon(QIcon("sys_tray_icon.ico"));
     trayIcon->setVisible(true);
 
 
