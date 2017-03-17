@@ -33,12 +33,17 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
     restoreAction = new QAction(tr("&Restore"), this);
     connect(restoreAction, &QAction::triggered, this, &SettingsDialog::MakeVisible);
 
+    startStopAction = new QAction(tr("&Stop Scan"), this);
+    connect(startStopAction, &QAction::triggered, this, &SettingsDialog::on_btn_StartStop_clicked);
+
     quitAction = new QAction(tr("&Quit"), this);
     connect(quitAction, &QAction::triggered, qApp, &QCoreApplication::quit);
 
     trayIconMenu = new QMenu(this);
     trayIconMenu->addAction(restoreAction);
     trayIconMenu->addAction(minimizeAction);
+    trayIconMenu->addSeparator();
+    trayIconMenu->addAction(startStopAction);
     trayIconMenu->addSeparator();
     trayIconMenu->addAction(quitAction);
 
@@ -417,10 +422,15 @@ void SettingsDialog::on_btn_StartStop_clicked()
 {
     if(m_StoppedViaButton == false) {
         ui->btn_StartStop->setText("Start");
+        startStopAction->setText("Start Scan");
         StopMonitoring();
+        m_StoppedViaButton = true;
+        ui->lbl_status->setText("Idle");
     }
     else {
         ui->btn_StartStop->setText("Stop");
+        startStopAction->setText("Stop Scan");
         StartMonitoring();
+        m_StoppedViaButton = false;
     }
 }

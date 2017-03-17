@@ -93,6 +93,7 @@ private:
 
     QAction *minimizeAction;
     QAction *restoreAction;
+    QAction *startStopAction;
     QAction *quitAction;
 
     QSystemTrayIcon *trayIcon;
