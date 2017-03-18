@@ -4,13 +4,13 @@
 #
 #-------------------------------------------------
 
-RC_FILE = BatchStabalizer.rc
+RC_FILE = BatchStabilizer.rc
 
 QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = BatchStabalizer
+TARGET = BatchStabilizer
 TEMPLATE = app
 
 # The following define makes your compiler emit warnings if you use
@@ -46,3 +46,8 @@ HEADERS  += \
 
 FORMS    += \
     settingsDialog.ui
+
+install_it.path = $${OUT_PWD}
+install_it.files += $${PWD}/sys_tray_icon.ico
+
+INSTALLS += install_it

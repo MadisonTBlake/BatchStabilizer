@@ -71,7 +71,7 @@ public:
                     "VirtualDub.video.filters.Clear();" << "\n" <<
                     "VirtualDub.video.filters.Add(\"Deshaker v3.1\");" << "\n" <<
                     "VirtualDub.video.filters.instance[0].Config(\"19|2|30|4|1|0|1|0|640|480|1|2|1000|1000|1000|1000|4|1|0|2|8|30|300|4|\" + VirtualDub.params[0] + \".log\" + \"|0|0|0|0|0|0|0|0|0|0|0|0|0|1|15|15|5|15|0|0|30|30|0|0|0|0|1|0|0|10|1000|1|88|1|1|20|5000|100|20|1|0|ff00ff\");" << "\n" <<
-                    "VirtualDub.SaveAVI(VirtualDub.params[0] + \"_stabalized.avi\");" << "\n" <<
+                    "VirtualDub.SaveAVI(VirtualDub.params[0] + \"_stabilized.avi\");" << "\n" <<
                     "VirtualDub.Close();" << "\n";
 
         pass2.close();

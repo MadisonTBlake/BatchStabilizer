@@ -54,7 +54,7 @@ void DeshakerPass2::CleanAfterAbort()
     QThread::msleep(500);
 
     QFileInfo info(this->m_Filename);
-    QFile::remove(info.absoluteDir().absolutePath() + QDir::separator() + info.completeBaseName() + "_stabalized.avi");
+    QFile::remove(info.absoluteDir().absolutePath() + QDir::separator() + info.completeBaseName() + "_stabilized.avi");
 }
 
 bool DeshakerPass2::ShouldIgnoreFile(const QString &filename)
@@ -62,7 +62,7 @@ bool DeshakerPass2::ShouldIgnoreFile(const QString &filename)
     QFileInfo f1(filename);
 
     QFileInfo info(this->m_Filename);
-    QFileInfo f2(info.absoluteDir().absolutePath() + QDir::separator() + info.completeBaseName() + "_stabalized.avi");
+    QFileInfo f2(info.absoluteDir().absolutePath() + QDir::separator() + info.completeBaseName() + "_stabilized.avi");
 
     if(f1 == f2) {
         return true;
@@ -73,5 +73,5 @@ bool DeshakerPass2::ShouldIgnoreFile(const QString &filename)
 QString DeshakerPass2::Output() const
 {
     QFileInfo info(this->m_Filename);
-    return info.absoluteDir().absolutePath() + QDir::separator() + info.completeBaseName() + "_stabalized.avi";
+    return info.absoluteDir().absolutePath() + QDir::separator() + info.completeBaseName() + "_stabilized.avi";
 }

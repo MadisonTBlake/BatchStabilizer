@@ -58,7 +58,7 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
     this->setWindowState(Qt::WindowMinimized);
 
     //load from preferecnes
-    m_Settings = new QSettings("BatchStabalizer", "BatchStabalizer");
+    m_Settings = new QSettings("Batchstabilizer", "Batchstabilizer");
 
     if(m_Settings->contains("VDUB_PATH") == true) {
         QString VDubPath = m_Settings->value("VDUB_PATH").toString();
@@ -109,7 +109,7 @@ void SettingsDialog::PerformScan(const QString &path)
         it.next();
         QString filename = it.fileName();
 
-        if(filename.endsWith("_stabalized.avi")) {
+        if(filename.endsWith("_stabilized.avi")) {
             if(files.contains(it.fileInfo().completeBaseName() + ".mp4") == false) {
                 if(m_ActiveTasks.ShouldIgnore(it.fileInfo().absoluteFilePath()) == false && m_QueuedTasks.ShouldIgnore(it.fileInfo().absoluteFilePath()) == false)
                 {
@@ -122,7 +122,7 @@ void SettingsDialog::PerformScan(const QString &path)
             }
         }
         else if(filename.endsWith(".log")) {
-            if(files.contains(it.fileInfo().completeBaseName() + "_stabalized.avi") == false) {
+            if(files.contains(it.fileInfo().completeBaseName() + "_stabilized.avi") == false) {
 
                 if(m_ActiveTasks.ShouldIgnore(it.fileInfo().absoluteFilePath()) == false && m_QueuedTasks.ShouldIgnore(it.fileInfo().absoluteFilePath()) == false)
                 {
@@ -144,8 +144,8 @@ void SettingsDialog::PerformScan(const QString &path)
                 //remove .log file (should of been done when avi was compleated)
             }
         }
-        else if((filename.endsWith(".mp4") && filename.endsWith("_stabalized.mp4") == false) || (filename.endsWith(".MP4") && filename.endsWith("_stabalized.MP4") == false) ) {
-            if(files.contains(it.fileInfo().completeBaseName() + ".log") == false && files.contains(it.fileInfo().completeBaseName() + "_stabalized.mp4") == false) {
+        else if((filename.endsWith(".mp4") && filename.endsWith("_stabilized.mp4") == false) || (filename.endsWith(".MP4") && filename.endsWith("_stabilized.MP4") == false) ) {
+            if(files.contains(it.fileInfo().completeBaseName() + ".log") == false && files.contains(it.fileInfo().completeBaseName() + "_stabilized.mp4") == false) {
                 auto newTasks = std::make_shared<DeshakerPass1>(ui->le_VDub->text(), it.fileInfo().absoluteFilePath());
                 this->m_QueuedTasks.Append(newTasks);
             }
@@ -177,20 +177,20 @@ void SettingsDialog::CleanIncomplete(const QString &path)
                 continue;
             }
 
-            //If final stabalized file exists and so does the output from pass two
+            //If final stabilized file exists and so does the output from pass two
             //Then the final conversion wasn't complete
             //Remove final from directory and take out both files of files-to-consider
-            if(file.contains("_stabalized.mp4")) {
+            if(file.contains("_stabilized.mp4")) {
                 QString previousFile = file;
-                previousFile.replace("_stabalized.mp4", "_stabalized.avi");
+                previousFile.replace("_stabilized.mp4", "_stabilized.avi");
                 if(files.contains(previousFile)) {
                     QFile::remove(path + QDir::separator() + file);
                 }
             }
 
-            if(file.contains("_stabalized.avi")) {
+            if(file.contains("_stabilized.avi")) {
                 QString base = file;
-                base.replace("_stabalized.avi", "");
+                base.replace("_stabilized.avi", "");
 
                 QString P2CompleteFile = "." + base + "_p2";
 
@@ -332,18 +332,18 @@ void SettingsDialog::TasksFinished(TasksBase* task, ActionResult result)
             //make file to mark completion
             QString file(((DeshakerPass1*)task)->Filename());
             QFileInfo info(file);
-            QFile completionIndicator(info.absoluteDir().absolutePath() + QDir::separator() + "."+ info.completeBaseName().remove("_stabalized") + "_p2");
+            QFile completionIndicator(info.absoluteDir().absolutePath() + QDir::separator() + "."+ info.completeBaseName().remove("_stabilized") + "_p2");
             completionIndicator.open(QIODevice::WriteOnly);
 
             auto newTasks = std::make_shared<MPEGConversion>(ui->le_VDub->text(), task->Output());
             this->m_QueuedTasks.Append(newTasks);
         }
         if(task->Type() == TasksBase::MPEG_CONVERSION) {
-            QString aviStabalized = ((MPEGConversion*)task)->Filename();
-            QFileInfo info(aviStabalized);
+            QString avistabilized = ((MPEGConversion*)task)->Filename();
+            QFileInfo info(avistabilized);
             QString path = info.absoluteDir().absolutePath();
             QString baseName = info.completeBaseName();
-            baseName.replace("_stabalized", "");
+            baseName.replace("_stabilized", "");
 
             QString P1Complete = path + QDir::separator() + "." + baseName + "_p1";
             QString P2Complete = path + QDir::separator() + "." + baseName + "_p2";
@@ -352,7 +352,7 @@ void SettingsDialog::TasksFinished(TasksBase* task, ActionResult result)
             QString original2 = path + QDir::separator() + baseName +  ".MP4";
             QFile::remove(P1Complete);
             QFile::remove(P2Complete);
-            QFile::remove(aviStabalized);
+            QFile::remove(avistabilized);
             QFile::remove(logFile);
             //QFile.remove(original1);
             //QFile.remove(original2);
