@@ -145,7 +145,7 @@ void SettingsDialog::PerformScan(const QString &path)
             }
         }
         else if((filename.endsWith(".mp4") && filename.endsWith("_stabalized.mp4") == false) || (filename.endsWith(".MP4") && filename.endsWith("_stabalized.MP4") == false) ) {
-            if(files.contains(it.fileInfo().completeBaseName() + ".log") == false && files.contains(it.fileInfo().completeBaseName() + "_stabalized." + it.fileInfo().completeSuffix()) == false) {
+            if(files.contains(it.fileInfo().completeBaseName() + ".log") == false && files.contains(it.fileInfo().completeBaseName() + "_stabalized.mp4") == false) {
                 auto newTasks = std::make_shared<DeshakerPass1>(ui->le_VDub->text(), it.fileInfo().absoluteFilePath());
                 this->m_QueuedTasks.Append(newTasks);
             }

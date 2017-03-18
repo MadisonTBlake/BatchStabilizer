@@ -3,6 +3,7 @@
 #include <QFileInfo>
 #include <QDir>
 #include <QThread>
+#include <QStandardPaths>
 
 DeshakerPass1::DeshakerPass1(const QString &VDubPath, const QString &filename) :
     DeshakerGeneric(VDubPath, filename)
@@ -23,7 +24,7 @@ DeshakerPass1::TasksTypes DeshakerPass1::Type() const
 void DeshakerPass1::Execute()
 {
     QFileInfo info(this->m_Filename);
-    TasksBase::Execute(this->m_VDubPath.replace("/", "\\") + "\\vdub.exe /i Deshaker_Pass1.vcf \"" + info.absoluteDir().absolutePath().replace("/", "\\") + "\\" + info.completeBaseName() + "\" \"" + info.completeSuffix() + "\"");
+    TasksBase::Execute(this->m_VDubPath.replace("/", "\\") + "\\vdub.exe /i " + QStandardPaths::writableLocation(QStandardPaths::AppDataLocation).replace("/", "\\") + "\\Deshaker_Pass1.vcf \"" + info.absoluteDir().absolutePath().replace("/", "\\") + "\\" + info.completeBaseName() + "\" \"" + info.completeSuffix() + "\"");
 }
 
 bool DeshakerPass1::Equal(const TasksBase &that)

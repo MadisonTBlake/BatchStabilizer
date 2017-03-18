@@ -3,6 +3,9 @@
 
 #include <QFile>
 #include <QTextStream>
+#include <QStandardPaths>
+#include <QDebug>
+#include <QDir>
 
 class DeshakerConfiguration
 {
@@ -12,7 +15,10 @@ public:
     }
 
     void WriteScripts() {
-        QFile pass1("Deshaker_Pass1.vcf");
+        QDir dir;
+        dir.mkpath(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
+
+        QFile pass1(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/Deshaker_Pass1.vcf");
         pass1.open(QIODevice::WriteOnly);
         QTextStream outPass1(&pass1);
 
@@ -43,7 +49,7 @@ public:
         pass1.close();
 
 
-        QFile pass2("Deshaker_Pass2.vcf");
+        QFile pass2(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/Deshaker_Pass2.vcf");
         pass2.open(QIODevice::WriteOnly);
         QTextStream outPass2(&pass2);
 
