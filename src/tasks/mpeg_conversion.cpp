@@ -33,7 +33,8 @@ void MPEGConversion::Execute()
     QFileInfo info(this->m_Filename);
     QString in = info.absoluteDir().absolutePath().replace("/", "\\") + "\\" + info.completeBaseName() + "." + info.completeSuffix();
     QString out = info.absoluteDir().absolutePath().replace("/", "\\") + "\\" + info.completeBaseName() + ".mp4";
-    QString command = this->FFMPEGPath().replace("/", "\\") + "\\ffmpeg.exe -i " + in + " -c:a aac -b:a 128k -c:v libx264 -crf 23 " + out;
+    //QString command = this->FFMPEGPath().replace("/", "\\") + "\\ffmpeg.exe -i " + in + " -c:a aac -b:a 128k -c:v libx264 -crf 23 " + out;
+    QString command = this->FFMPEGPath().replace("/", "\\") + "\\ffmpeg.exe -i " + in + " -y -c:v libx264 -pix_fmt yuv420p " + out;
     TasksBase::Execute(command);
 }
 
