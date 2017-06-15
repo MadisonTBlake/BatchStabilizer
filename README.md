@@ -46,4 +46,16 @@ In the `bin`folder of the downloaded archive, extract `ffmpeg.exe` into your Vir
 
 # Using Batch Stabalizer
 
+This program is mostly designed to stay running in the background and continuously monitor the given folder for changes.
+
+By default, the installer will add the program to auto start upon boot up.
+
+However for it to work you must set up the directories. The values you enter here will persist when the application is closed or machine restarts.
+
+To edit the values bring the tool up into foreground mode by right clicking and restoring on icon in toolbar. If there is no icon then the application is not running.
+
+With the dialog up. Set the virtual dub folder to be the folder configured above and set the directory to monitor to be a directory of your choice. It is recomened you choose a mostly empty folder and add videos you want to stabalize later. This tool will stabalize every .mpg in the given folder.
+
+Stabalization may take quite some time, and can consume quite a bit of resourses while doing so. If you need you computer's resourses for whatever reason, press "Stop" on the dialog or "Stop Scan" on the context menu to halt any current action. The text will then change to "Start" and "Start Scan", which you can press at a later time to resume monitoring. Stoping the app does stops everything, if it where almost done with a given pass, progress will restart.
+
 # Compile From Source
