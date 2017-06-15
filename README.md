@@ -3,8 +3,10 @@ This tool runs in the background and will only be called upon when the directory
 
 Word of warning: Deshaking a video file can take quite some time, on the order of hours, and can consume quite a bit of computer resourses. This tool contains functionality that can halt all conversions and stop monitoring that can be used if computer resourses are needed in the middle of a conversion.
 
-- (https://github.com/MadisonTBlake/BatchStabilizer/blob/master/README.md#setup)[Setup] Details how to setup the tools needed by this application
-- (https://github.com/MadisonTBlake/BatchStabilizer/blob/master/README.md#using-batch-stabalizer)[Using] Gives a brief rundown on how to use this tool after it is installed
+- [Setup](https://github.com/MadisonTBlake/BatchStabilizer/blob/master/README.md#setup) Details how to setup the tools needed by this application
+- [Using](https://github.com/MadisonTBlake/BatchStabilizer/blob/master/README.md#using-batch-stabalizer) Gives a brief rundown on how to use this tool after it is installed
+
+Be sure to look in [Issues](https://github.com/MadisonTBlake/BatchStabilizer/issues) for a list of known bugs.
 
 # Setup
 
