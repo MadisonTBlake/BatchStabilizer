@@ -1,3 +1,8 @@
+This is a Windows tool that monitors a given directory and automatically runs Deshaker stabilization filter on any new video files.
+This tool runs in the background and will only be called upon when the directory it is monitoring has a new video file added to it.
+
+Word of warning: Deshaking a video file can take quite some time, on the order of hours, and can consume quite a bit of computer resourses. This tool contains functionality that can halt all conversions and stop monitoring that can be used if computer resourses are needed in the middle of a conversion.
+
 # Setup
 
 For this tool to work, a set of tool chains based around VirtualDub are required to be installed prior.
