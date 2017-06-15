@@ -64,7 +64,13 @@ However for it to work you must set up the directories. The values you enter her
 
 To edit the values bring the tool up into foreground mode by right clicking and restoring on icon in toolbar. If there is no icon then the application is not running.
 
+![image](https://user-images.githubusercontent.com/7232344/27164259-0b886a68-515a-11e7-84e8-faccdd8da4fd.png)
+
+(Note that there is known issue regarding no icon being in the start menu [#2](https://github.com/MadisonTBlake/BatchStabilizer/issues/2))
+
 With the dialog up. Set the virtual dub folder to be the folder configured above and set the directory to monitor to be a directory of your choice. It is recomened you choose a mostly empty folder and add videos you want to stabalize later. This tool will stabalize every .mpg in the given folder.
+
+![image](https://user-images.githubusercontent.com/7232344/27164327-85dc3a42-515a-11e7-8a3b-cc747e41eee5.png)
 
 Stabalization may take quite some time, and can consume quite a bit of resourses while doing so. If you need you computer's resourses for whatever reason, press "Stop" on the dialog or "Stop Scan" on the context menu to halt any current action. The text will then change to "Start" and "Start Scan", which you can press at a later time to resume monitoring. Stoping the app does stops everything, if it where almost done with a given pass, progress will restart.
 
